@@ -3,7 +3,7 @@ let peerConnection;
 const leaveButton = document.getElementById('leaveButton');
 leaveButton.addEventListener('click', leave);
 
-const signalingWebsocket = new WebSocket("ws://" + window.location.host + "/socket");
+const signalingWebsocket = new WebSocket("wss://" + window.location.host + "/socket");
 
 function leave() {
     console.log('Ending call');
@@ -85,7 +85,7 @@ async function displayLocalStreamAndSignal(firstTime) {
         }
         sendOfferSignal();
     } catch (e) {
-        alert(`getUserMedia() error: ${e.name}`);
+        alert(`getUserMedia() error: ${e.name}\n` + e);
         throw e;
     }
     console.log('Start complete');
