@@ -1,15 +1,23 @@
 let peerConnection;
+let mediaRecorder;
+let recordedBlobs;
 
-const leaveButton = document.getElementById('leaveButton');
-leaveButton.addEventListener('click', leave);
+const codecPreferences = document.querySelector('#codecPreferences');
+
+const errorMsgElement = document.querySelector('span#errorMsg');
+const recordedVideo = document.querySelector('video#recorded');
+const recordButton = document.querySelector('button#record');
+
+const exitBtn = document.getElementById('exit');
+exitBtn.addEventListener('click', exit);
 
 const signalingWebsocket = new WebSocket("wss://" + window.location.host + "/socket");
 
-function leave() {
+function exit() {
     console.log('Ending call');
     peerConnection.close();
     signalingWebsocket.close();
-    window.location.href = './index.html';
+    window.location.href = '/';
 }
 
 
@@ -31,7 +39,7 @@ signalingWebsocket.onmessage = function (msg) {
     }
 };
 
-signalingWebsocket.onopen = init();
+// signalingWebsocket.onopen = init();
 
 function sendSignal(signal) {
     if (signalingWebsocket.readyState === 1) {
@@ -39,10 +47,17 @@ function sendSignal(signal) {
     }
 }
 
-function init() {
-    console.log("Connected to signaling endpoint. Now initializing.");
-    preparePeerConnection();
-    displayLocalStreamAndSignal(true);
+async function init(constraints) {
+    try {
+        // const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        // handleSuccess(stream);
+        console.log("Connected to signaling endpoint. Now initializing.");
+        preparePeerConnection();
+        displayLocalStreamAndSignal(true);
+    } catch (e) {
+        console.error('navigator.getUserMedia error:', e);
+        errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+    }
 }
 
 function preparePeerConnection() {
@@ -62,33 +77,6 @@ function preparePeerConnection() {
         }
     };
     peerConnection.addEventListener('track', displayRemoteStream);
-}
-
-async function displayLocalStreamAndSignal(firstTime) {
-    console.log('Requesting local stream');
-    const localVideo = document.getElementById('localVideo');
-    let localStream;
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true
-        });
-        console.log('Received local stream');
-        localVideo.srcObject = stream;
-        localStream = stream;
-        logVideoAudioTrackInfo(localStream);
-        if (firstTime) {
-            setTimeout(
-                function () {
-                    addLocalStreamToPeerConnection(localStream);
-                }, 2000);
-        }
-        sendOfferSignal();
-    } catch (e) {
-        alert(`getUserMedia() error: ${e.name}\n` + e);
-        throw e;
-    }
-    console.log('Start complete');
 }
 
 async function addLocalStreamToPeerConnection(localStream) {
@@ -137,13 +125,59 @@ function handleCandidate(candidate) {
     peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
 }
 
-function logVideoAudioTrackInfo(localStream) {
-    const videoTracks = localStream.getVideoTracks();
-    const audioTracks = localStream.getAudioTracks();
-    if (videoTracks.length > 0) {
-        console.log(`Using video device: ${videoTracks[0].label}`);
+document.querySelector('button#start').addEventListener('click', async () => {
+    document.querySelector('button#start').disabled = true;
+    const constraints = {
+        audio: {
+            // echoCancellation: {exact: true}
+        },
+        video: {
+            width: 1280, height: 720
+        }
+    };
+    console.log('Using media constraints:', constraints);
+    await init(constraints);
+});
+
+function handleSuccess(stream) {
+    recordButton.disabled = false;
+    console.log('getUserMedia() got stream:', stream);
+    window.stream = stream;
+
+    const gumVideo = document.querySelector('video#localVideo');
+    gumVideo.srcObject = stream;
+
+    getSupportedMimeTypes().forEach(mimeType => {
+        const option = document.createElement('option');
+        option.value = mimeType;
+        option.innerText = option.value;
+        codecPreferences.appendChild(option);
+    });
+    codecPreferences.disabled = false;
+}
+
+async function displayLocalStreamAndSignal(firstTime) {
+    console.log('Requesting local stream');
+    const localVideo = document.getElementById('localVideo');
+    let localStream;
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: true
+        });
+        console.log('Received local stream');
+        localVideo.srcObject = stream;
+        localStream = stream;
+        if (firstTime) {
+            setTimeout(
+                function () {
+                    addLocalStreamToPeerConnection(localStream);
+                }, 2000);
+        }
+        sendOfferSignal();
+    } catch (e) {
+        alert(`getUserMedia() error: ${e.name}\n` + e);
+        throw e;
     }
-    if (audioTracks.length > 0) {
-        console.log(`Using audio device: ${audioTracks[0].label}`);
-    }
+    console.log('Start complete');
 }

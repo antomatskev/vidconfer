@@ -1,10 +1,48 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-    <title>Video chat</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+    <link rel="stylesheet" href="css/index.css">
+    <title>vidconfer</title>
 </head>
 <body>
-<h1>Video chat WebRTC + Java Spring</h1>
-<a href="vidconfer.html">Let's chat!</a>
+<div>
+    <h1>vidconfer</h1>
+</div>
+<div>
+    <span id="errorMsg"></span>
+</div>
+<div id="container">
+    <div id="stream">
+        <div>
+            <h3>Your partner</h3>
+            <video poster="https://img.freepik.com/free-vector/cartoon-funny-dog-sitting-isolated-white-background_29190-2681.jpg?w=1380"
+                   id="remoteVideo" autoplay></video>
+        </div>
+        <div>
+            <h3>You</h3>
+            <video poster="https://img.freepik.com/free-photo/british-shorthair-kitten-3-5-months-old-sitting-looking-up_191971-4591.jpg?w=1060"
+                   id="localVideo" autoplay muted></video>
+        </div>
+    </div>
+    <div id="recording">
+        <div>
+            <h3>Your partner</h3>
+            <video id="gum" autoplay></video>
+        </div>
+        <div>
+            <h3>You</h3>
+            <video id="recorder" autoplay muted></video>
+        </div>
+    </div>
+</div>
+<div id="recButtons">
+    <button id="start">Start camera</button>
+    <button id="record" disabled>Start Recording</button>
+    <button id="play" disabled>Play</button>
+    <button id="download" disabled>Download</button>
+    <button id="exit">Exit</button>
+</div>
+<script type="text/javascript" src="vidconfer.js?reloads=true"></script>
 </body>
 </html>
