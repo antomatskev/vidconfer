@@ -26,16 +26,17 @@ recordButton.addEventListener('click', () => {
 
 const playButton = document.querySelector('button#play');
 playButton.addEventListener('click', () => {
-    const superBuffer = new Blob(recordedBlobs, {type: mime});
+    const superBufferRemote = new Blob(recordedBlobs, {type: mime});
     recordedRemote.src = null;
     recordedRemote.srcObject = null;
-    recordedRemote.src = window.URL.createObjectURL(superBuffer);
+    recordedRemote.src = window.URL.createObjectURL(superBufferRemote);
     recordedRemote.controls = true;
     recordedRemote.play();
 
+    const superBufferLocal = new Blob(recordedBlobs, {type: mime});
     recordedLocal.src = null;
     recordedLocal.srcObject = null;
-    recordedLocal.src = window.URL.createObjectURL(superBuffer);
+    recordedLocal.src = window.URL.createObjectURL(superBufferLocal);
     recordedLocal.controls = true;
     recordedLocal.play();
 });
@@ -103,7 +104,7 @@ function sendSignal(signal) {
 async function init(constraints) {
     try {
         console.log("Connected to signaling endpoint. Now initializing.");
-        preparePeerConnection();
+        // preparePeerConnection();
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         handleSuccess(stream, true);
     } catch (e) {
@@ -192,6 +193,7 @@ document.querySelector('button#start').addEventListener('click', async () => {
 });
 
 function handleSuccess(stream, firstTime) {
+    console.log('getUserMedia() got stream:', stream);
     recordButton.disabled = false;
     const localVideo = document.getElementById('localVideo');
     try {
