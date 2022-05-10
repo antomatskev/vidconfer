@@ -61,10 +61,10 @@ downloadButton.addEventListener('click', () => {
 const signalingWebsocket = new WebSocket("wss://" + window.location.host + "/socket");
 
 function exit() {
+    window.location.href = '/';
     console.log('Ending call');
     peerConnection.close();
     signalingWebsocket.close();
-    window.location.href = '/';
 }
 
 
@@ -86,14 +86,14 @@ signalingWebsocket.onmessage = function (msg) {
     }
 };
 
-signalingWebsocket.onopen = init({
-    audio: {
-        echoCancellation: {exact: true}
-    },
-    video: {
-        width: 1280, height: 720
-    }
-});
+// signalingWebsocket.onopen = init({
+//     audio: {
+//         echoCancellation: {exact: true}
+//     },
+//     video: {
+//         width: 1280, height: 720
+//     }
+// });
 
 function sendSignal(signal) {
     if (signalingWebsocket.readyState === 1) {
