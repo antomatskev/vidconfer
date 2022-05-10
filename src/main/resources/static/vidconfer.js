@@ -104,7 +104,7 @@ function sendSignal(signal) {
 async function init(constraints) {
     try {
         console.log("Connected to signaling endpoint. Now initializing.");
-        // preparePeerConnection();
+        preparePeerConnection();
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         handleSuccess(stream, true);
     } catch (e) {

@@ -19,8 +19,20 @@
            poster="https://img.freepik.com/free-photo/british-shorthair-kitten-3-5-months-old-sitting-looking-up_191971-4591.jpg?w=1060" autoplay muted></video>
 </div>
 <div class="box">
-    <button id="leaveButton" style="color: red; ">Exit</button>
+    <button id="exit" style="color: red; ">Exit</button>
 </div>
 <script type="text/javascript" src="vidconfer.js?reloads=true"></script>
+<script>
+    const constraints = {
+        audio: {
+            echoCancellation: {exact: true}
+        },
+        video: {
+            width: 1280, height: 720
+        }
+    };
+    console.log('Using media constraints:', constraints);
+    await init(constraints);
+</script>
 </body>
 </html>
