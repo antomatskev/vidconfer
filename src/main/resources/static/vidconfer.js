@@ -14,11 +14,11 @@ const mime = 'video/mp4;codecs=h264,aac';
 exitBtn.addEventListener('click', exit);
 
 recordButton.addEventListener('click', () => {
-    if (recordButton.textContent === 'Start Recording') {
+    if (recordButton.textContent === 'Record') {
         startRecording();
     } else {
         stopRecording();
-        recordButton.textContent = 'Start Recording';
+        recordButton.textContent = 'Record';
         playButton.disabled = false;
         downloadButton.disabled = false;
     }
@@ -185,7 +185,7 @@ document.querySelector('button#start').addEventListener('click', async () => {
             echoCancellation: {exact: true}
         },
         video: {
-            width: 1280, height: 720
+            width: 800, height: 640
         }
     };
     console.log('Using media constraints:', constraints);
@@ -260,7 +260,7 @@ function startRecording() {
     }
 
     console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
-    recordButton.textContent = 'Stop Recording';
+    recordButton.textContent = 'Stop';
     playButton.disabled = true;
     downloadButton.disabled = true;
     mediaRecorder.onstop = (event) => {
